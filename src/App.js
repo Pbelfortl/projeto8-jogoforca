@@ -7,14 +7,16 @@ import forca5 from "./img/forca5.png"
 import forca6 from "./img/forca6.png"
 import "./css/style.css"
 import palavras from "./palavras"
-import  { useState } from "react"
+import { useState } from "react"
+import Letras from "./Letras"
+
 
 
 const alfabeto = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 const images = [forca0, forca1, forca2, forca3, forca4, forca5, forca6]
 let escolhida, normalizada, contaErros = 0
 let auxArr = []
-let  clicados = [...alfabeto]
+let clicados = [...alfabeto]
 
 
 export default function App() {
@@ -24,32 +26,32 @@ export default function App() {
     const [imagem, setImagem] = useState(images[contaErros])
     const [result, setResult] = useState('word')
     const [chute, setChute] = useState()
-    
+
 
     return (
 
         <div className="container">
             <div className="gameBox">
-                <img src={imagem} className="image" data-identifier="game-image" alt="Forca"/>
+                <img src={imagem} className="image" data-identifier="game-image" alt="Forca" />
                 <div className="sideBox">
                     <button className="button" onClick={escolher} data-identifier="choose-word">Escolher palavra</button>
                     <div className={result} data-identifier="word">{palavra}</div>
                 </div>
             </div>
             <div className="keyboard">
-                <Letras/>
+                <Letras alfabeto={alfabeto} clicados={clicados} setPalavra={setPalavra} Palpite={Palpite} />
             </div>
             <div className="inputBox" data-identifier="type-guess">
                 Já sei a palavra!
-                <input placeholder="Digite seu chute!" 
-                    disabled={(result==='correto'||result==='errado')?true:false} 
+                <input placeholder="Digite seu chute!"
+                    disabled={(result === 'correto' || result === 'errado') ? true : false}
                     onChange={e => setChute(e.target.value)}
                     value={chute}
                 ></input>
-                    <button data-identifier="guess-button" 
-                    onClick={()=>chutar(chute)}
-                    disabled={(result==='correto'||result==='errado')?true:false} 
-                    >Chutar</button>
+                <button data-identifier="guess-button"
+                    onClick={() => chutar(chute)}
+                    disabled={(result === 'correto' || result === 'errado') ? true : false}
+                >Chutar</button>
             </div>
         </div>
 
@@ -63,73 +65,60 @@ export default function App() {
 
         escolhida = (palavras[Math.floor(Math.random() * palavras.length)])
         normalizada = escolhida.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-        console.log (normalizada)
 
-        let escondida = escolhida.replaceAll(/[^]/gi,'_')
+        let escondida = escolhida.replaceAll(/[^]/gi, '_')
         console.log(escolhida)
-        
+
         setPalavra(escondida)
         setImagem(images[contaErros])
         setResult('word')
         setChute('')
     }
 
-    function Letras () {
-        return (
-            alfabeto.map((L, index)=>
-            (<div
-                key={index}
-                data-identifier="letter"
-                className={(clicados.includes(L) ? "clicado":"naoClicado")} 
-                onClick={()=>setPalavra(Palpite(L))}> {L} </div>))
-        )
-    }
-  
-
-    function Palpite (letra) {
+    function Palpite(letra) {
 
         clicados = [...clicados, letra]
-        for(let i=0; i<(escolhida.length); i++){
-            if(normalizada[i] === letra){
-    
-                auxArr[i]=(escolhida[i])
-    
-            }else if(auxArr[i]===undefined ){
-                auxArr[i]=('_')
+        for (let i = 0; i < (escolhida.length); i++) {
+            if (normalizada[i] === letra) {
+
+                auxArr[i] = (escolhida[i])
+
+            } else if (auxArr[i] === undefined) {
+                auxArr[i] = ('_')
             }
         }
 
-        if(!((normalizada).includes(letra)) && contaErros<=6){
+        if (!((normalizada).includes(letra)) && contaErros <= 6) {
             contaErros++
             setImagem(images[contaErros])
         }
 
-        if (contaErros < 6 && escolhida === auxArr.join('')){
+        if (contaErros < 6 && escolhida === auxArr.join('')) {
             setResult("correto")
             clicados = [...alfabeto]
             return escolhida
         }
 
-        if (contaErros === 6){
+        if (contaErros === 6) {
             setResult("errado")
             clicados = [...alfabeto]
             return escolhida
         }
 
-        return(auxArr.join(''))
+        return (auxArr.join(''))
     }
 
-    function chutar (chute) {
+    function chutar(chute) {
         if (chute === escolhida || chute === normalizada) {
             setResult("correto")
             clicados = [...alfabeto]
             setPalavra(escolhida)
-            setChute('')
-        }else {
+
+        } else {
             setResult("errado")
             clicados = [...alfabeto]
             setPalavra(escolhida)
-            setChute('')
+
         }
     }
 }
