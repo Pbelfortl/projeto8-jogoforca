@@ -24,7 +24,7 @@ export default function App() {
 
     const [palavra, setPalavra] = useState('')
     const [imagem, setImagem] = useState(images[contaErros])
-    const [result, setResult] = useState('word')
+    const [result, setResult] = useState('correto')
     const [chute, setChute] = useState()
 
 
